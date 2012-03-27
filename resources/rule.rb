@@ -1,8 +1,8 @@
 #
 # Cookbook Name:: iptables
-# Definition:: iptables_rule
+# Resource:: rule
 #
-# Copyright 2008-2009, Opscode, Inc.
+# Copyright 2008-20, Opscode, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,21 +16,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+actions :create, :delete
 
-define :iptables_rule, :enable => true, :source => nil, :variables => {}, :cookbook => nil do
-  template_source = params[:source] ? params[:source] : "#{params[:name]}.erb"
-  
-  template "/etc/iptables.d/#{params[:name]}" do
-    source template_source
-    mode 0644
-    cookbook params[:cookbook] if params[:cookbook]
-    variables params[:variables]
-    backup false
-    notifies :run, resources(:execute => "rebuild-iptables")
-    if params[:enable]
-      action :create
-    else
-      action :delete
-    end
-  end
+attribute :name, :kind_of => String, :name_attribute => true
+attribute :source, :default => nil
+attribute :variables, :kind_of => Mash, :default => {}
+attribute :cookbook, :kind_of => String, :default => nil
+
+def initialize(*args)
+  super
+  @action = :create
 end
