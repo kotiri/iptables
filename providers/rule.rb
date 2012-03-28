@@ -17,16 +17,19 @@
 # limitations under the License.
 #
 
-template_source = new_resource.source ? new_resource.source : "#{new_resource.name}.erb"
+[:create, :delete].each do |action|
+  action action do
+    template_source = new_resource.source ? new_resource.source : "#{new_resource.name}.erb"
 
-template "/etc/iptables.d/#{new_resource.name}" do
-  source template_source
-  mode 0644
-  cookbook new_resource.cookbook if new_resource.cookbook
-  variables new_resource.variables
-  backup false
-  notifies :run, resources(:execute => "rebuild-iptables")
-  action new_resource.action
+    template "/etc/iptables.d/#{new_resource.name}" do
+      source template_source
+      mode 0644
+      cookbook new_resource.cookbook if new_resource.cookbook
+      variables new_resource.variables
+      backup false
+      notifies :run, resources(:execute => "rebuild-iptables")
+      action new_resource.action
+    end
+    new_resource.updated_by_last_action(true)
+  end
 end
-
-new_resource.updated_by_last_action(true)

@@ -20,7 +20,7 @@ actions :create, :delete
 
 attribute :name, :kind_of => String, :name_attribute => true
 attribute :source, :default => nil
-attribute :variables, :kind_of => Mash, :default => {}
+attribute :variables, :kind_of => Hash, :default => {}
 attribute :cookbook, :kind_of => String, :default => nil
 
 def initialize(*args)
